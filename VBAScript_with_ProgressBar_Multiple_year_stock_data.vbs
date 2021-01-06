@@ -1,6 +1,4 @@
-Option Explicit
-
-Sub VBA_ChallengeVIP()
+Sub VBA_Challenge()
 
 Dim cr As Long, ct As Long, i As Long, t As Long, s As Long, e As Long, WSCount As Double, j As Double, totalrows As Long
 Dim k As Long, amountcompleted As Long, istored As Long
@@ -123,24 +121,13 @@ Do Until i > cr And j > WSCount 'Progress Bar loop
    
           Next i
           
-          
-            Range("L2").Select
-            Range(Selection, Selection.End(xlDown)).Select
-            PercentColumn = Selection.Rows.Count + 1
-
-            Cells(2, 18) = (Round(Application.WorksheetFunction.Max(Range("L2" & ":L" & PercentColumn)), 2)) * 100
-            'Cells(2, 17) = Application.WorksheetFunction.Index(Cells.Offset
-            Cells(3, 18) = (Round(Application.WorksheetFunction.Min(Range("L2" & ":L" & PercentColumn)), 2)) * 100
-            Cells(4, 18) = Application.WorksheetFunction.Max(Range("M2" & ":M" & PercentColumn))
-            
-           ' Cells(2, 17) = Application.WorksheetFunction.Index(Range("M2" & ":M" & PercentColumn), Application.WorksheetFunction.Match(Cells(2, 18).Value, rngColumn2, 1), 1)
+                   
+Call GreatestValuesArray 'Calling array to generate Greatest% Increase, decrease and Total Volume
             
                    
     Next j
-
     
-    '''''''''''Call Array'''''''''''''''''''
-    
+        
     
     'This will unselect all previous selected cells and return to starting point.
     Worksheets(1).Activate 'Activate first worksheet
@@ -151,10 +138,9 @@ Loop
 
 Unload Progress 'Unload user form at the end.
 
-
+MsgBox "Successfully Completed!"
 
 End Sub
-
 
 Sub InitializeProgressBar() 'Initialize Progress Bar with values shown below.
 
@@ -165,5 +151,66 @@ With Progress
     .text2.Caption = "0/0" ' Amount of worksheets completed starting point.
     .Show vbModeless 'Modeless allows the user to interact with excel sheet while progress and calculations are going through.
 End With
+
+End Sub
+
+
+Sub GreatestValuesArray()
+Dim GreatestValuesArray()
+Dim Dimension1 As Long, Dimension2 As Long
+Dim NumberDimension1 As Long, NumberDimension2 As Long
+
+
+NumberDimension1 = Range("J2", Range("J2").End(xlDown)).Cells.Count ' Count rows
+NumberDimension2 = Range("J2", Range("J2").End(xlToRight)).Cells.Count ' Count Columns
+
+ReDim GreatestValuesArray(1 To NumberDimension1, 1 To NumberDimension2) ' Count columns
+
+'This loop will assigned values to array.
+For Dimension1 = LBound(GreatestValuesArray, 1) To UBound(GreatestValuesArray, 1) ' 1 is the element number (in this case rows) /LowerBound & Upperbound meanings
+    
+    For Dimension2 = LBound(GreatestValuesArray, 1) To UBound(GreatestValuesArray, 2) ' 2 is the element number (in this case columns)
+        
+        GreatestValuesArray(Dimension1, Dimension2) = Range("J2").Offset(Dimension1 - 1, Dimension2 - 1).Value
+ 
+    Next Dimension2
+
+Next Dimension1
+
+
+'Reused same loop variables
+'This loop will be used to extraxct values from array based on conditions.
+For Dimension1 = LBound(GreatestValuesArray, 1) To UBound(GreatestValuesArray, 1) ' 1 is the element number (in this case rows) /LowerBound & Upperbound meanings
+        'Conditions to obtain Greatest % increase
+        If Dimension1 = UBound(GreatestValuesArray, 1) Then
+            Exit For
+        End If
+        If GreatestValuesArray(Dimension1, 3) > GreatestValuesArray(Dimension1 + 1, 3) And GreatestValuesArray(Dimension1, 3) > Cells(2, 18).Value Then
+            Cells(2, 17).Value = GreatestValuesArray(Dimension1, 1) 'Ticker
+            Cells(2, 18).Value = Format((GreatestValuesArray(Dimension1, 3)), "Percent") 'Greatest %Increase Value
+        ElseIf GreatestValuesArray(Dimension1, 3) < GreatestValuesArray(Dimension1 + 1, 3) And GreatestValuesArray(Dimension1 + 1, 3) > Cells(2, 18).Value Then
+            Cells(2, 17).Value = GreatestValuesArray(Dimension1 + 1, 1) 'Ticker
+            Cells(2, 18).Value = Format((GreatestValuesArray(Dimension1 + 1, 3)), "Percent") 'Greatest %Increase Value
+        End If
+        
+        'Conditions to obtain Greatest % decrease
+        If GreatestValuesArray(Dimension1, 3) < GreatestValuesArray(Dimension1 + 1, 3) And GreatestValuesArray(Dimension1, 3) < Cells(3, 18).Value Then
+            Cells(3, 17).Value = GreatestValuesArray(Dimension1, 1) 'Ticker
+            Cells(3, 18).Value = Format((GreatestValuesArray(Dimension1, 3)), "Percent") 'Greatest %Decrease Value
+        ElseIf GreatestValuesArray(Dimension1, 3) > GreatestValuesArray(Dimension1 + 1, 3) And GreatestValuesArray(Dimension1 + 1, 3) < Cells(3, 18).Value Then
+            Cells(3, 17).Value = GreatestValuesArray(Dimension1 + 1, 1) 'Ticker
+            Cells(3, 18).Value = Format((GreatestValuesArray(Dimension1 + 1, 3)), "Percent") 'Greatest %Decrease Value
+        End If
+        
+        'Conditions to obtain Greatest Total Volume
+        If GreatestValuesArray(Dimension1, 4) > GreatestValuesArray(Dimension1 + 1, 4) And GreatestValuesArray(Dimension1, 4) > Cells(4, 18).Value Then
+            Cells(4, 17).Value = GreatestValuesArray(Dimension1, 1) 'Ticker
+            Cells(4, 18).Value = GreatestValuesArray(Dimension1, 4) 'Greatest Total Volume
+        ElseIf GreatestValuesArray(Dimension1, 4) < GreatestValuesArray(Dimension1 + 1, 4) And GreatestValuesArray(Dimension1 + 1, 4) > Cells(4, 18).Value Then
+            Cells(4, 17).Value = GreatestValuesArray(Dimension1 + 1, 1) 'Ticker
+            Cells(4, 18).Value = GreatestValuesArray(Dimension1 + 1, 4) 'Greatest Total Volume
+        End If
+
+Next Dimension1
 
 End Sub
