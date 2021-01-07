@@ -1,7 +1,6 @@
-
 Option Explicit
 
-Sub VBA_Challenge_NoProgressBar()
+Sub VBA_Challenge()
 
 Dim cr As Long, i As Long, t As Long, s As Long, e As Long, WSCount As Double, j As Double, k As Long
 
@@ -96,6 +95,9 @@ For j = 1 To WSCount 'Run script on all worksheets
    
     Next i
           
+    'Calling Sub to generate Total Stock Volume
+     Call SumStockVolumeArray
+          
     'Calling Sub to generate Greatest% Increase, decrease and Total Volume.
     Call GreatestValuesArray
 
@@ -171,4 +173,60 @@ For r = LBound(GreatestValuesArray, 1) To UBound(GreatestValuesArray, 1) '1 is t
 Next r
 
 End Sub
+
+
+Sub SumStockVolumeArray() 'This Array is used to calculate Total Stock Volume per Ticker
+Dim SumStockVolumeArray()
+Dim r As Long, c As Long
+Dim TotalRows As Long, TotalColumns As Long, tn As Long, TotalVolume As Double
+tn = 2
+
+
+TotalRows = Range("A2", Range("A2").End(xlDown)).Cells.Count ' Count rows
+TotalColumns = Range("A2", Range("A2").End(xlToRight)).Cells.Count ' Count Columns
+
+ReDim SumStockVolumeArray(1 To TotalRows, 1 To TotalColumns) ' Count columns
+
+'This loop is to assign values to array.
+For r = LBound(SumStockVolumeArray, 1) To UBound(SumStockVolumeArray, 1) '1 is the element number (in this case rows)
+    
+    For c = LBound(SumStockVolumeArray, 1) To UBound(SumStockVolumeArray, 2) '2 is the element number (in this case columns)
+        
+        SumStockVolumeArray(r, c) = Range("A2").Offset(r - 1, c - 1).Value
+ 
+    Next c
+
+Next r
+
+
+'Re-used same loop variables
+'This loop will be used to extract values from array based on conditions.
+For r = LBound(SumStockVolumeArray, 1) To UBound(SumStockVolumeArray, 1) '1 is the element number (in this case rows) /LowerBound & Upperbound
+        'Conditions to obtain Greatest % increase
+        
+        'Exit when reach the last cell of the worksheet.
+        If r = UBound(SumStockVolumeArray, 1) Then
+            TotalVolume = TotalVolume + SumStockVolumeArray(r, 7) 'Total Stock Volume per Ticker
+            Cells(tn, 13).Value = TotalVolume
+            Exit For
+        End If
+        
+        If SumStockVolumeArray(r, 1) = SumStockVolumeArray(r + 1, 1) Then
+            TotalVolume = TotalVolume + SumStockVolumeArray(r, 7)
+            Cells(tn, 13).Value = TotalVolume
+            
+        Else
+        
+            TotalVolume = TotalVolume + SumStockVolumeArray(r, 7) 'Total Stock Volume
+            Cells(tn, 13).Value = TotalVolume 'Total Stock Volume per Ticker
+            TotalVolume = 0
+            tn = tn + 1
+        
+        End If
+        
+       
+Next r
+
+End Sub
+
 
