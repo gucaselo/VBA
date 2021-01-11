@@ -61,32 +61,28 @@ For j = 1 To WSCount 'Run script on all worksheets
                
                     
             'Conditions to determine if price increased or dropped also considering if divisor different from 0
-            If Cells(i, 6).Value > Cells(s, 6).Value And Cells(s, 6).Value <> 0 Then
-                Cells(t, 11) = Round(Cells(i, 6).Value - Cells(s, 6).Value, 2)
+            If Cells(i, 6).Value > Cells(s, 6).Value And Cells(s, 3).Value <> 0 Then
+                Cells(t, 11) = Round(Cells(i, 6).Value - Cells(s, 3).Value, 2)
                 Cells(t, 11).Interior.ColorIndex = 4 'Cell filled with color Green because value its positive
-                Cells(t, 12) = Round(((Cells(i, 6).Value - Cells(s, 6).Value) / Cells(s, 6).Value), 2) * 100 & "%"
-                Cells(t, 13) = Application.WorksheetFunction.Sum(Range("G" & s & ":G" & i)) ' Adding total stock volume
+                Cells(t, 12) = Round(((Cells(i, 6).Value - Cells(s, 3).Value) / Cells(s, 3).Value), 2) * 100 & "%"
                 s = e 'Starting location for each ticker is now equal to "e".
             
-            ElseIf Cells(i, 6).Value < Cells(s, 6).Value And Cells(s, 6).Value <> 0 Then
-                Cells(t, 11) = Round(Cells(i, 6).Value - Cells(s, 6).Value, 2)
+            ElseIf Cells(i, 6).Value < Cells(s, 3).Value And Cells(s, 3).Value <> 0 Then
+                Cells(t, 11) = Round(Cells(i, 6).Value - Cells(s, 3).Value, 2)
                 Cells(t, 11).Interior.ColorIndex = 3 'Cell filled with color Red because value its negative
-                Cells(t, 12) = Round(((((Cells(s, 6).Value - Cells(i, 6).Value) / Cells(s, 6).Value) * 100) * (-1)), 2) & "%"
-                Cells(t, 13) = Application.WorksheetFunction.Sum(Range("G" & s & ":G" & i))
+                Cells(t, 12) = Round(((((Cells(s, 3).Value - Cells(i, 6).Value) / Cells(s, 3).Value) * 100) * (-1)), 2) & "%"
                 s = e
                 
             'Condition to determine if price increased or dropped if divisor equal to 0
-            ElseIf Cells(i, 6).Value > Cells(s, 6).Value And Cells(s, 6).Value = 0 Then
-                Cells(t, 11) = Round(Cells(i, 6).Value - Cells(s, 6).Value, 2)
+            ElseIf Cells(i, 6).Value > Cells(s, 3).Value And Cells(s, 3).Value = 0 Then
+                Cells(t, 11) = Round(Cells(i, 6).Value - Cells(s, 3).Value, 2)
                 Cells(t, 11).Interior.ColorIndex = 4
                 Cells(t, 12) = Round(0, 2) & "%" ' To avoid errors in calculation, value is equal to 0%
-                Cells(t, 13) = Application.WorksheetFunction.Sum(Range("G" & s & ":G" & i))
                 s = e
-            ElseIf Cells(i, 6).Value < Cells(s, 6).Value And Cells(s, 6).Value = 0 Then
-                Cells(t, 11) = Round(Cells(i, 6).Value - Cells(s, 6).Value, 2)
+            ElseIf Cells(i, 6).Value < Cells(s, 3).Value And Cells(s, 3).Value = 0 Then
+                Cells(t, 11) = Round(Cells(i, 6).Value - Cells(s, 3).Value, 2)
                 Cells(t, 11).Interior.ColorIndex = 3
                 Cells(t, 12) = Round(0, 2) & "%"
-                Cells(t, 13) = Application.WorksheetFunction.Sum(Range("G" & s & ":G" & i))
                 s = e
         
                 
@@ -98,7 +94,7 @@ For j = 1 To WSCount 'Run script on all worksheets
     'Calling Sub to generate Total Stock Volume
      Call SumStockVolumeArray
           
-    'Calling Sub to generate Greatest% Increase, decrease and Total Volume.
+    'Calling Sub to generate Greatest% Increase, Decrease and Total Volume.
     Call GreatestValuesArray
 
     Range("R4").EntireColumn.AutoFit 'Adjust cell to fit Greatest Total Volume data.
@@ -109,11 +105,10 @@ Next j
 'This will go back to startinig work sheet.
 Worksheets(1).Activate 'Activate first worksheet
     
-
 MsgBox "Successfully Completed!"
 
 End Sub
-
+'This sub will generate Greatest% Increase, Decrease and Total Volume
 Sub GreatestValuesArray()
 Dim GreatestValuesArray()
 Dim r As Long, c As Long
@@ -174,8 +169,8 @@ Next r
 
 End Sub
 
-
-Sub SumStockVolumeArray() 'This Array is used to calculate Total Stock Volume per Ticker
+'This Array is used to calculate Total Stock Volume per Ticker
+Sub SumStockVolumeArray()
 Dim SumStockVolumeArray()
 Dim r As Long, c As Long
 Dim TotalRows As Long, TotalColumns As Long, tn As Long, TotalVolume As Double
@@ -228,5 +223,3 @@ For r = LBound(SumStockVolumeArray, 1) To UBound(SumStockVolumeArray, 1) '1 is t
 Next r
 
 End Sub
-
-
