@@ -1,7 +1,7 @@
 
 Option Explicit
 
-Sub VBA_Challenge_NO_BuiltInFunctions_or_ProgressBar()
+Sub VBA_Challenge()
 
 Dim cr As Long, i As Long, t As Long, s As Long, e As Long, WSCount As Double, j As Double, k As Long
 
