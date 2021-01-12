@@ -1,6 +1,7 @@
+
 Option Explicit
 
-Sub VBA_Challenge()
+Sub VBA_Challenge_NO_BuiltInFunctions_or_ProgressBar()
 
 Dim cr As Long, i As Long, t As Long, s As Long, e As Long, WSCount As Double, j As Double, k As Long
 
@@ -61,7 +62,7 @@ For j = 1 To WSCount 'Run script on all worksheets
                
                     
             'Conditions to determine if price increased or dropped also considering if divisor different from 0
-            If Cells(i, 6).Value > Cells(s, 6).Value And Cells(s, 3).Value <> 0 Then
+            If Cells(i, 6).Value > Cells(s, 3).Value And Cells(s, 3).Value <> 0 Then
                 Cells(t, 11) = Round(Cells(i, 6).Value - Cells(s, 3).Value, 2)
                 Cells(t, 11).Interior.ColorIndex = 4 'Cell filled with color Green because value its positive
                 Cells(t, 12) = Round(((Cells(i, 6).Value - Cells(s, 3).Value) / Cells(s, 3).Value), 2) * 100 & "%"
@@ -223,3 +224,5 @@ For r = LBound(SumStockVolumeArray, 1) To UBound(SumStockVolumeArray, 1) '1 is t
 Next r
 
 End Sub
+
+
